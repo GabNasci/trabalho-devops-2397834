@@ -1,4 +1,3 @@
-# Código principal do Flask (app.py)
 import time
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -8,6 +7,7 @@ from flask_appbuilder import ModelView
 from sqlalchemy.exc import OperationalError
 from prometheus_flask_exporter import PrometheusMetrics
 import logging
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
@@ -61,6 +61,19 @@ class Aluno(db.Model):
     turma = db.Column(db.String(50), nullable=False)
     disciplinas = db.Column(db.String(200), nullable=False)
 
+# Modelo de Usuario - Definição da tabela 'Usuario' no banco de dados
+class Usuario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    senha_hash = db.Column(db.String(128), nullable=False)
+
+    def set_password(self, senha):
+        self.senha_hash = generate_password_hash(senha)
+
+    def check_password(self, senha):
+        return check_password_hash(self.senha_hash, senha)
+
 # Visão do modelo Aluno para o painel administrativo
 class AlunoModelView(ModelView):
     datamodel = SQLAInterface(Aluno)
@@ -90,6 +103,27 @@ def adicionar_aluno():
     db.session.commit()
     logger.info(f"Aluno {data['nome']} {data['sobrenome']} adicionado com sucesso!")
     return jsonify({'message': 'Aluno adicionado com sucesso!'}), 201
+
+# Rota para adicionar um usuário - Método POST
+@app.route('/usuarios', methods=['POST'])
+def adicionar_usuario():
+    data = request.get_json()
+    # Verifica se o usuário já existe
+    if Usuario.query.filter_by(username=data['username']).first():
+        return jsonify({'message': 'Usuário já existe!'}), 400
+    if Usuario.query.filter_by(email=data['email']).first():
+        return jsonify({'message': 'Email já cadastrado!'}), 400
+
+    novo_usuario = Usuario(
+        username=data['username'],
+        email=data['email']
+    )
+    novo_usuario.set_password(data['senha'])  # Define a senha com hashing
+
+    db.session.add(novo_usuario)
+    db.session.commit()
+    logger.info(f"Usuário {data['username']} criado com sucesso!")
+    return jsonify({'message': 'Usuário criado com sucesso!'}), 201
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
