@@ -1,3 +1,4 @@
+# Código principal do Flask (app.py)
 import time
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -11,8 +12,6 @@ import logging
 app = Flask(__name__)
 
 metrics = PrometheusMetrics(app)
-
-
 # Configuração da chave secreta para sessões
 app.config['SECRET_KEY'] = 'minha_chave_secreta_super_secreta'  # Substitua por uma chave segura
 
@@ -42,7 +41,7 @@ for i in range(attempts):
                     last_name='User',
                     email='admin@admin.com',
                     role=appbuilder.sm.find_role(appbuilder.sm.auth_role_admin),
-                    password='lil'
+                    password='admin'
                 )
         logger.info("Banco de dados inicializado com sucesso.")
         break
@@ -91,42 +90,6 @@ def adicionar_aluno():
     db.session.commit()
     logger.info(f"Aluno {data['nome']} {data['sobrenome']} adicionado com sucesso!")
     return jsonify({'message': 'Aluno adicionado com sucesso!'}), 201
-
-# Rota para criar um novo usuário - Método POST
-@app.route('/usuarios', methods=['POST'])
-def criar_usuario():
-    data = request.get_json()
-    username = data.get('username')
-    first_name = data.get('first_name')
-    last_name = data.get('last_name')
-    email = data.get('email')
-    password = data.get('password')
-    role_name = data.get('role', 'Public')  # Define 'Public' como padrão, caso o papel não seja fornecido
-
-    # Busca o papel do usuário no sistema de autenticação do AppBuilder
-    role = appbuilder.sm.find_role(role_name)
-    if not role:
-        return jsonify({'error': f"Papel '{role_name}' não encontrado."}), 400
-
-    # Verifica se o usuário já existe
-    if appbuilder.sm.find_user(username=username):
-        return jsonify({'error': 'Usuário já existe.'}), 400
-
-    # Cria o novo usuário
-    try:
-        appbuilder.sm.add_user(
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            role=role,
-            password=password
-        )
-        logger.info(f"Usuário {username} criado com sucesso!")
-        return jsonify({'message': 'Usuário criado com sucesso!'}), 201
-    except Exception as e:
-        logger.error(f"Erro ao criar usuário: {e}")
-        return jsonify({'error': 'Erro ao criar usuário.'}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
