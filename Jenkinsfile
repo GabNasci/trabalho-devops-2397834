@@ -14,16 +14,6 @@ pipeline {
             }
         }
 
-        stage('Rodar Testes') {
-            steps {
-                script {
-                    // Rodar os testes com o pytest (ou qualquer outra ferramenta de testes que você esteja utilizando)
-                    // sh 'docker compose run --rm test'
-                    echo 'testezinho'
-                }
-            }
-        }
-
         stage('Build e Deploy') {
             steps {
                 script {
@@ -48,6 +38,15 @@ pipeline {
                     //     docker logs prometheus
                     //     docker logs grafana
                     // '''
+                }
+            }
+        }
+
+        stage('Rodar Testes') {
+            steps {
+                script {
+                    // Rodar os testes com o pytest (ou qualquer outra ferramenta de testes que você esteja utilizando)
+                    sh 'docker compose run --rm test'
                 }
             }
         }
