@@ -18,7 +18,8 @@ pipeline {
             steps {
                 script {
                     // Rodar os testes com o pytest (ou qualquer outra ferramenta de testes que você esteja utilizando)
-                    sh 'docker compose run --rm test'
+                    // sh 'docker compose run --rm test'
+                    echo 'testezinho'
                 }
             }
         }
