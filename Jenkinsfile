@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     // Rodar os testes com o pytest (ou qualquer outra ferramenta de testes que você esteja utilizando)
-                    sh 'docker-compose run --rm test'
+                    sh 'docker compose run --rm test'
                 }
             }
         }
@@ -28,12 +28,12 @@ pipeline {
                 script {
                     // Construir as imagens Docker para cada serviço
                     sh '''
-                        docker-compose build
+                        docker compose build
                     '''
 
                     // Subir os containers do Docker com Docker Compose
                     sh '''
-                        docker-compose up -d
+                        docker compose up -d
                     '''
 
                     // // (Opcional) Realizar o monitoramento e verificação de saúde após o deploy
