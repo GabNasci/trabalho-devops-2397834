@@ -14,3 +14,4 @@ COPY dashboards/mariadb_dashboard.json /var/lib/grafana/provisioning/dashboards/
 RUN chown -R 472:472 /var/lib/grafana/provisioning
 
 USER grafana
+
