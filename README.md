@@ -3,8 +3,6 @@
 **Autor**: Gabriel Nascimento de Carvalho  
 **RA**: 239783-4  
 
----
-
 ## **Descrição**
 
 Este projeto provisiona automaticamente um ambiente de monitoramento usando o Grafana, configurado para exibir um dashboard que monitora requisições de um servidor Prometheus. A automação inclui a integração com Jenkins para gerenciamento do pipeline de execução.
@@ -31,7 +29,7 @@ Este projeto provisiona automaticamente um ambiente de monitoramento usando o Gr
 1. **Acessar o Jenkins**
    - Vá até o Jenkins em `http://localhost:8080` e faça login.
 
-   **Exemplo de Tela Inicial do Jenkins:**
+   **Tela Inicial do Jenkins:**
    ![alt text](image.png)
 
 2. **Criar um Novo Item**
@@ -39,16 +37,16 @@ Este projeto provisiona automaticamente um ambiente de monitoramento usando o Gr
    - Digite um nome para o pipeline, como `Pipeline-Grafana`.
    - Selecione a opção **"Pipeline"** e clique em **"OK"**.
 
-   **Exemplo de Criação de Pipeline:**
+   **Tela de criação de Pipeline:**
     ![alt text](image-1.png)
 
 3. **Configurar o Pipeline**
    - Na página de configuração do pipeline:
-     - Role até a seção **Build Triggers** e selecione **Consultar periodicamente o SCM**
-     - Adicione o seguinte texto para que o jenkins verifique o repositório periódicamente: `H/5 * * * *`
+     - Role até a seção **Build Triggers** e selecione **Consultar periodicamente o SCM**.
+     - Adicione o seguinte texto para que o Jenkins verifique o repositório periodicamente: `H/5 * * * *`.
      - Role até a seção **Pipeline** e selecione a opção **Pipeline Script from SCM**.
 
-   **Exemplo de Configuração de Pipeline:**
+   **Tela de configuração de Pipeline:**
    ![alt text](image-2.png)
 
 4. **Configurar Repositório SCM**
@@ -67,11 +65,29 @@ Este projeto provisiona automaticamente um ambiente de monitoramento usando o Gr
    - Acompanhe os logs para verificar se os containers Docker (Prometheus, Grafana) foram provisionados corretamente.
    - Certifique-se de que a etapa final indica que o serviço Grafana está em execução.
 
-    **Exemplo da Tela da Pipeline:**
+    **Tela da Pipeline:**
    ![alt text](image-3.png)
+
 ---
 
-### **4. Acessar o Grafana**
+### **4. Rodar o Projeto Manualmente (Sem o Jenkins)**
+
+Caso não deseje utilizar o Jenkins para rodar o projeto, é possível executá-lo diretamente com o Docker Compose. Para isso, siga os passos abaixo:
+
+1. Navegue até o diretório do projeto no terminal.  
+2. Execute o comando:  
+
+   ```bash
+   docker compose up --build -d
+   ```
+
+3. Após a execução, acesse as aplicações nos seguintes endereços:  
+   - **Aplicação**: [http://localhost:5000](http://localhost:5000)  
+   - **Grafana**: [http://localhost:3000](http://localhost:3000)
+
+---
+
+### **5. Acessar o Grafana**
 
 1. Abra o navegador e vá para `http://localhost:3000`.
 2. Faça login no Grafana:
@@ -79,18 +95,18 @@ Este projeto provisiona automaticamente um ambiente de monitoramento usando o Gr
    - **Senha**: `admin` (ou a configurada no ambiente).
 3. Verifique o dashboard provisionado automaticamente e visualize as métricas de requisições.
 
-   **Exemplo de Dashboard no Grafana:**
-   ![alt text](image-4.png)
+   **Dashboard que você verá no Grafana:**
+   ![alt text](image-5.png)
+
+   **Observação**: O carregamento dos gráficos do dashboard pode demorar aproximadamente **30 segundos** após acessar a aplicação (Também recomendo configurar o **time range** do dashboard em `last 5 minutes`).
 
 ---
 
 ## **Resumo dos Passos**
 
-1. Certifique-se de que o Jenkins está rodando.
-2. Crie uma nova pipeline no Jenkins seguindo as instruções acima.
-3. Execute a pipeline.
-4. Acesse o Grafana em `http://localhost:3000` e explore o dashboard.
+1. Certifique-se de que o Jenkins está rodando (ou opte por rodar diretamente via Docker Compose).  
+2. Crie uma nova pipeline no Jenkins seguindo as instruções acima.  
+3. Execute a pipeline ou o comando `docker compose up --build -d`.  
+4. Acesse a aplicação Flask em `http://localhost:3000`, o Grafana em `http://localhost:3000` e explore o dashboard.  
 
 ---
-
-Se houver dúvidas ou problemas, entre em contato. 😊
